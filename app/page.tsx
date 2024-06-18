@@ -1,6 +1,21 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useMachine } from "@xstate/react";
+import { myMachine } from "@/machine/myFirstMachine";
 
 export default function Home() {
-  return <main>Hello World</main>;
+  const [state, send] = useMachine(myMachine);
+
+  return (
+    <main>
+      <p
+        onMouseEnter={() => send({ type: "MOUSEOVER" })}
+        onMouseLeave={() => send({ type: "MOUSEOUT" })}
+      >
+        {JSON.stringify(state.value)}
+      </p>
+      <button onClick={() => send({ type: "MOUSEOVER" })}>Mouse Over</button>
+      <button onClick={() => send({ type: "MOUSEOUT" })}>Mouse Out</button>
+    </main>
+  );
 }
