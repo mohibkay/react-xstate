@@ -1,20 +1,25 @@
 import { createMachine } from "xstate";
 
 export const todosMachine = createMachine({
-  /** @xstate-layout N4IgpgJg5mDOIC5QBUD2FWwAQFkCGAxgBYCWAdmAHQAyqeE5UWaGsAxC5lgDZ0SQBtAAwBdRKAAOmEgBcSqMuJAAPRAEYATAGZKWgJwaALAA4AbIYDsagKxDTQiwBoQAT0QBaLRsqmNNtWpamoEaFhYAvuHOnNj4xORUtPSMzOiYbEkMZEwyadgAZngk3IKiSlKwsvKKSCoeanqGlIaGGtZ6pmoOhjbWzm4I7u2U2mrG1hYOfob6etaRUSBk6HBKMbiEpBTl0nIKSqqDRt4tbR1dFj3Wfa4eGqamlNbmM5faLdZqkdF5G-EUND4KRiO0qexqoEO7jUpgslCE2nMQS8xiExi0Wn69VR8Ks9jUJnsBlM3xA6ziWyo60ykFBVX2tUOmmslE043GVgaXQeWIQmke3Ix4xMhj0mkMpPJmwSgOS2VSrCwAFEAE4q1Aq2m1Cr0iF1QYw7xi7QaUL6Lqi4y8-msuxC6wi40aBbhIA */
+  /** @xstate-layout N4IgpgJg5mDOIC5QBUD2FWwAQFkCGAxgBYCWAdmAHQAyqeE5UWaGsAxBhZeQG6oDWVFplyFSXWvUbN0mBL1QE8AFxKoyAbQAMAXW07EoAA6YSq9YZAAPRACYAzAHZKAVgBsAFltutLgJx+AIyOji4eADQgAJ6IABy2lB4u9oF+PrF+jlqBbm4AvnmRwtj4xORUkgxkTMVsYABO9aj1lEYANioAZs0AtpTFomUSdFU1srDyZHxK5pq6+pYmsGZqZJY2CA7O7l4+-kEhYZExCIH2folJsbHnsYEuLrH5BZFk6HCWA6XiYIums+tEABaNzHYFuShaKHZdwuWxaO7ZWIvEBfMTlGgjaTFP7LAFIayILxg05aBKBDweRxPbI5PyPFFooZCcZYSqQXErCwEjaU5y2TL2Jz3exeOEuEl3SiBWKObxuWJU66Kxms74YyrY1kAUUazQ5BKWXLWPKJVMoAscQscIrFtgl0UQZwuCqhbkC2QcsTCBQKQA */
   id: "Todos Machine",
-
+  initial: "Loading Todos",
+  schema: {
+    services: {} as {
+      loadTodos: {
+        data: string[];
+      };
+    },
+  },
   states: {
     "Loading Todos": {
-      on: {
-        "Todos loaded": "Todos Loaded",
-        "Loading todos failed": "Loading Todos Errored",
+      invoke: {
+        src: "loadTodos",
+        onDone: [{ target: "Todos Loaded" }],
+        onError: [{ target: "Todos Loaded" }],
       },
     },
-
     "Todos Loaded": {},
     "Loading Todos Errored": {},
   },
-
-  initial: "Loading Todos",
 });
