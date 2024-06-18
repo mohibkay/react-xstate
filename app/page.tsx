@@ -1,21 +1,20 @@
 "use client";
 
 import { useMachine } from "@xstate/react";
-import { myMachine } from "@/machine/myFirstMachine";
+import { todosMachine } from "@/machine/todoAppMachine";
 
 export default function Home() {
-  const [state, send] = useMachine(myMachine);
+  const [state, send] = useMachine(todosMachine);
 
   return (
     <main>
-      <p
-        onMouseEnter={() => send({ type: "MOUSEOVER" })}
-        onMouseLeave={() => send({ type: "MOUSEOUT" })}
-      >
-        {JSON.stringify(state.value)}
-      </p>
-      <button onClick={() => send({ type: "MOUSEOVER" })}>Mouse Over</button>
-      <button onClick={() => send({ type: "MOUSEOUT" })}>Mouse Out</button>
+      <p>{JSON.stringify(state.value)}</p>
+      <button onClick={() => send({ type: "Todos loaded" })}>
+        Todos Success
+      </button>
+      <button onClick={() => send({ type: "Loading todos failed" })}>
+        Todos Error
+      </button>
     </main>
   );
 }
