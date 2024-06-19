@@ -14,19 +14,8 @@ export default function Home() {
 
   return (
     <main>
-      <p>{JSON.stringify(state.value)}</p>
-      <button
-        onClick={() => send({ type: "Todos loaded", todos: ["Take bins out"] })}
-      >
-        Todos Success
-      </button>
-      <button
-        onClick={() =>
-          send({ type: "Loading todos failed", errorMessage: "Oh no!" })
-        }
-      >
-        Todos Error
-      </button>
+      <pre>{JSON.stringify(state.value)}</pre>
+      <pre>{JSON.stringify(state.context)}</pre>
     </main>
   );
 }

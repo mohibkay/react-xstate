@@ -1,25 +1,53 @@
-import { createMachine } from "xstate";
+import { createMachine, assign } from "xstate";
 
-export const todosMachine = createMachine({
-  /** @xstate-layout N4IgpgJg5mDOIC5QBUD2FWwAQFkCGAxgBYCWAdmAHQAyqeE5UWaGsAxBhZeQG6oDWVFplyFSXWvUbN0mBL1QE8AFxKoyAbQAMAXW07EoAA6YSq9YZAAPRACYAzAHZKAVgBsAFltutLgJx+AIyOji4eADQgAJ6IABy2lB4u9oF+PrF+jlqBbm4AvnmRwtj4xORUkgxkTMVsYABO9aj1lEYANioAZs0AtpTFomUSdFU1srDyZHxK5pq6+pYmsGZqZJY2CA7O7l4+-kEhYZExCIH2folJsbHnsYEuLrH5BZFk6HCWA6XiYIums+tEABaNzHYFuShaKHZdwuWxaO7ZWIvEBfMTlGgjaTFP7LAFIayILxg05aBKBDweRxPbI5PyPFFooZCcZYSqQXErCwEjaU5y2TL2Jz3exeOEuEl3SiBWKObxuWJU66Kxms74YyrY1kAUUazQ5BKWXLWPKJVMoAscQscIrFtgl0UQZwuCqhbkC2QcsTCBQKQA */
-  id: "Todos Machine",
-  initial: "Loading Todos",
-  schema: {
-    services: {} as {
-      loadTodos: {
-        data: string[];
-      };
-    },
-  },
-  states: {
-    "Loading Todos": {
-      invoke: {
-        src: "loadTodos",
-        onDone: [{ target: "Todos Loaded" }],
-        onError: [{ target: "Todos Loaded" }],
+export const todosMachine = createMachine(
+  {
+    /** @xstate-layout N4IgpgJg5mDOIC5QBUD2FWwAQFkCGAxgBYCWAdmAHQAyqeE5UWaGsAxBhZeQG6oDWVFplyFSXWvUbN0mBL1QE8AFxKoyAbQAMAXW07EoAA6YSq9YZAAPRAFoATAE5KAdntbHADgAsPgIyO9i5aLi4ANCAAnoj27pSOWvYArI5+Ln4AzJ5+WklJAL75EcLY+MTkVJIMZEwlbGAATg2oDZRGADYqAGYtALaUJaLlEnTVtbKw8mR8SuaauvqWJrBmamSWNggOAGyUSVo5GduentvbHhn2EdEImfaUGb5+nvaZGX7eSWeFRSBk6HBLIMyuIwEtTHMNnZQq53F5fN4AkEtJ5rnZMrtHN4gkk-K8jhkURlCsUJkNQTRRtISuCVpCkNZEN5KMljn4vu4kqEtN4Mkk0Qh7My-Hcsulto4sl9PCSQMCxBUBmSqpBaasLAzNt5Ja5vNi8klPHkJUcBbZta48t4JTzHpKko9ZfLhpUqTUZKwsABRJotVUM5bq9aapneFwsxwuDIZdIO-XJAWZZzHLRabY5PFS7xOskgxWDFUQSgAYQaYBUYCwFAA7mr6aBNklEbr9XkjV8sQKjq4Y1kJb53mnTj98kA */
+    id: "Todos Machine",
+    initial: "Loading Todos",
+    schema: {
+      services: {} as {
+        loadTodos: {
+          data: string[];
+        };
       },
     },
-    "Todos Loaded": {},
-    "Loading Todos Errored": {},
+    context: {
+      todo: [] as string[],
+      errorMessage: undefined as string | undefined,
+    },
+    states: {
+      "Loading Todos": {
+        invoke: {
+          src: "loadTodos",
+          onDone: [{ target: "Todos Loaded", actions: "assignTodosToContext" }],
+          onError: [
+            { target: "Todos Loaded", actions: "assignErrorToContext" },
+          ],
+        },
+      },
+      "Todos Loaded": {
+        states: {
+          "Create new": {},
+        },
+
+        initial: "Create new",
+      },
+      "Loading Todos Errored": {},
+    },
   },
-});
+  {
+    actions: {
+      assignTodosToContext: assign((context, event) => {
+        return {
+          todos: event.data,
+        };
+      }),
+      assignErrorToContext: assign((context, event) => {
+        return {
+          errorMessage: (event.data as Error).message,
+        };
+      }),
+    },
+  }
+);
