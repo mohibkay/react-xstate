@@ -13,7 +13,14 @@ export default function Home() {
 	//   },
 	// });
 
-	const [state, send] = useMachine(todosMachine);
+	const [state, send] = useMachine(todosMachine, {
+		services: {
+			loadTodos: async () => {
+				throw new Error('Failed to load todos');
+				return ['Take bin out', 'do laundary'];
+			},
+		},
+	});
 
 	return (
 		<main>

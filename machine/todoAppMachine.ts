@@ -2,38 +2,40 @@ import { createMachine } from 'xstate';
 
 export const todosMachine = createMachine(
 	{
-		/** @xstate-layout N4IgpgJg5mDOIC5QBUD2FUAICyBDAxgBYCWAdmAHQAyquEZUmaGsAxM6rJgDa0SQBtAAwBdRKAAOnYgBdiqUuJAAPRAFoAjEIBMFAOwAWAxo0BWM0KEA2ABwHTAGhABPdbb0UjGgMx7T2gE4rbVNvGwBfcKcOHAIScmo+BiZ0TlYaOmSZVK4AM1xibkFRJSlYWXlFJBV1byEbClsbE20NbXqNPT0nVwQ1UICKALtvbSsA71NrY0iokFJ0OCUYvCIyMFLpOQUlVT6DG28KbRsgmx1fCftvHvUug2Pg4b0AgKEzq0jo1Ni1hIz6KRGBx4NUyhUdtU9moThpHoEXud-FZJrc+u59HpvAZrKYcQE9CiviAVnF1hQQZgAZBNuVtlVQNCtEdfKZgnUfGyrEJui51MZdAZ2v48UikcTSX9KACsjlMGAAE4K1AKmlgraVXb8ybHU62C4vbGhNFqAWeYUhA5CUzi2ZAA */
+		/** @xstate-layout N4IgpgJg5mDOIC5QBUD2FUAICyBDAxgBYCWAdmAHQAyquEZUmaGsAxBuRWQG6oDWlZljxEylGnQZN0qWAh6p8uAC7FUpANoAGALradiUAAdZxVesMgAHogBMAZgDsFAKyPbATgCMXxwBZbLQA2L3sggBoQAE9EAA4vCntbW1j7Dy0XDyCte1CAXzzIoRwCEk4JelJGITYwACc61DqKIwAbFQAzJoBbCmKRMvFaSuqZOQUlc01dfUsTWDM1UksbBB97Ck97eJd4vxcHWz9ImIRkvwpY1O9snK0snILCkFJ0OEt+0rE50ymVxAAtBFooCghQtBCtLFkkFvC4XKEggUijISqJysMpDUfgs-khrIgAidEB4NgiPB5bJldl4-AFYsiQJ90YIxpgKpAcYsLPjVnTnF4grZHE4obYggFgacvFpbBRHLTHAraRTxY4PIzmYNqJiqphlGz6o06pz8fNucteYS-AKhSLHGKJeLiWsRfKndk-L5BfYXE88kA */
 		id: 'Todo Machine',
 		schema: {
-			events: {} as
-				| { type: 'Todos loaded'; todos: string[] }
-				| { type: 'Loading todos failed'; errorMessage: string },
+			// events: {} as
+			// | { type: 'Todos loaded'; todos: string[] }
+			// | { type: 'Loading todos failed'; errorMessage: string },
+			services: {} as {
+				loadTodos: {
+					data: string[];
+				};
+			},
 		},
 		tsTypes: {} as import('./todoAppMachine.typegen').Typegen0,
 		states: {
 			'Loading Todos': {
-				on: {
-					'Todos loaded': {
-						target: 'Todos Loaded',
-						actions: 'consoleLogTodos',
-					},
-					'Loading todos failed': {
-						target: 'Loading todos errored',
-					},
+				invoke: {
+					src: 'loadTodos',
+					onDone: [
+						{
+							target: 'Todos Loaded',
+						},
+					],
+					onError: [
+						{
+							target: 'Loading todos errored',
+						},
+					],
 				},
 			},
-
 			'Todos Loaded': {},
 			'Loading todos errored': {},
 		},
 
 		initial: 'Loading Todos',
 	},
-	{
-		actions: {
-			consoleLogTodos: (context, event) => {
-				alert(JSON.stringify(event.todos));
-			},
-		},
-	},
+	{},
 );
